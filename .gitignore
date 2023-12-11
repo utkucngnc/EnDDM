@@ -1,0 +1,4 @@
+models/pre_trained/*
+models/trained/*
+**__pycache__/*
+.DS_Store
