@@ -10,7 +10,7 @@ import numpy as np
 from skimage.io import imsave
 import warnings
 
-from src.mmif_ddim.config import diffusion_config, model_config
+from .config import diffusion_config, model_config
 warnings.filterwarnings('ignore')
 
 def image_read(path, mode='RGB'):
@@ -25,14 +25,7 @@ def image_read(path, mode='RGB'):
     return img
 
 
-if __name__ == '__main__':
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--model_config', type=str,default = diffusion_config)
-    parser.add_argument('--diffusion_config', type=str,default = model_config)                     
-    parser.add_argument('--gpu', type=int, default=0)
-    parser.add_argument('--save_dir', type=str, default='./output')
-    args = parser.parse_args()
+def fuse_imgs(args, mode='RGB'):
    
     # logger
     logger = get_logger('DPS')
@@ -52,8 +45,7 @@ if __name__ == '__main__':
     sampler = create_sampler(**diffusion_config) 
     sample_fn = partial(sampler.p_sample_loop, model=model)
    
-    # Working directory
-    test_folder=r"input"     
+    # Working directory   
     out_path = args.save_dir
     os.makedirs(out_path, exist_ok=True)
     for img_dir in ['recon', 'progress']:
@@ -61,31 +53,31 @@ if __name__ == '__main__':
 
     i=0
     for img_name in os.listdir(os.path.join(test_folder,"ir")):
-        inf_img = image_read(os.path.join(test_folder,"vi",img_name),mode='GRAY')[np.newaxis,np.newaxis, ...]/255.0 
-        vis_img = image_read(os.path.join(test_folder,"ir",img_name), mode='GRAY')[np.newaxis,np.newaxis, ...]/255.0 
+        img_1 = image_read(os.path.join(test_folder,"vi",img_name),mode='GRAY')[np.newaxis,np.newaxis, ...]/255.0 
+        img_2 = image_read(os.path.join(test_folder,"ir",img_name), mode='GRAY')[np.newaxis,np.newaxis, ...]/255.0 
 
-        inf_img = inf_img*2-1
-        vis_img = vis_img*2-1
+        img_1 = img_1*2-1
+        img_2 = img_2*2-1
 
         # crop to make divisible
         scale = 32
-        h, w = inf_img.shape[2:]
+        h, w = img_1.shape[2:]
         h = h - h % scale
         w = w - w % scale
 
-        inf_img = ((torch.FloatTensor(inf_img))[:,:,:h,:w]).to(device)
-        vis_img = ((torch.FloatTensor(vis_img))[:,:,:h,:w]).to(device)
-        assert inf_img.shape == vis_img.shape
+        img_1 = ((torch.FloatTensor(img_1))[:,:,:h,:w]).to(device)
+        img_2 = ((torch.FloatTensor(img_2))[:,:,:h,:w]).to(device)
+        assert img_1.shape == img_2.shape
 
         logger.info(f"Inference for image {i}")
 
         # Sampling
         seed = 3407
         torch.manual_seed(seed)
-        x_start = torch.randn((inf_img.repeat(1, 3, 1, 1)).shape, device=device)  
+        x_start = torch.randn((img_1.repeat(1, 3, 1, 1)).shape, device=device)  
 
         with torch.no_grad():
-            sample = sample_fn(x_start=x_start, record=True, I = inf_img, V = vis_img, save_root=out_path, img_index = os.path.splitext(img_name)[0], lamb=0.5,rho=0.001)
+            sample = sample_fn(x_start=x_start, record=True, I = img_1, V = img_2, save_root=out_path, img_index = os.path.splitext(img_name)[0], lamb=0.5,rho=0.001)
 
         sample= sample.detach().cpu().squeeze().numpy()
         sample=np.transpose(sample, (1,2,0))

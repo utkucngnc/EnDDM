@@ -27,5 +27,5 @@ model_config = {
     "resblock_updown": True,
     "use_fp16": False,
     "use_new_attention_order": False,
-    "model_path": "models/pre_trained/256x256_diffusion_uncond.pt"
+    "model_path": "../256x256_diffusion_uncond.pt"
 }
