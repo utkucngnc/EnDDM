@@ -26,7 +26,7 @@ class BatteryDataset(Dataset):
     def __getitem__(self, index) -> List[Any]:
         if th.is_tensor(index):
             index = index.tolist()
-        return self.imgs[index], self.labels[index]
+        return Image.open(self.imgs[index]), self.labels[index]
     
     def __len__(self) -> int:
         return len(self.imgs)
@@ -38,7 +38,7 @@ class BatteryDataset(Dataset):
             raise ValueError("Path is not a directory")
         for file in os.listdir(path):
             if file.split('.')[-1] in IMG_EXT:
-                self.imgs.append(Image.open(os.path.join(path, file)))
+                self.imgs.append(os.path.join(path, file))
                 self.labels.append(int(file.split('.')[0]))
         self.imgs.sort()
         self.labels.sort()

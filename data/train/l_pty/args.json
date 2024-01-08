@@ -1,0 +1,1 @@
+{"input_path": "../Pristine/PTY_pristine_raw.tif", "output_path": "./data/train/l_pty/", "shape": [256, 256, 3], "mods": ["blur", "crop", "flip", "rotate", "noise"]}

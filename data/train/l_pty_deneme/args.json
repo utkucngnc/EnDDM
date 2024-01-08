@@ -1,0 +1,1 @@
+{"input_path": "./data/train/l_pty/", "output_path": "./data/train/l_pty_deneme/", "shape": [256, 256, 3], "mods": ["blur", "crop", "flip", "rotate", "noise"]}
