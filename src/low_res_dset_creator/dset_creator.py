@@ -2,7 +2,7 @@ from typing import List, Dict
 import os
 import json
 import numpy as np
-from PIL import Image, ImageFilter
+from PIL import Image
 
 EXT = ['png', 'jpg', 'jpeg', 'bmp', 'tiff', 'tif']
 MODIFICATIONS = ['blur', 'noise', 'rotate', 'flip', 'crop']
@@ -30,7 +30,8 @@ class datasetCreator:
         self.output_path = args['output_path']
         
         if self.fuse:
-            import src.mmif_ddim.sample as fuse_imgs
+            from src.mmif_ddim.sample import fuse_imgs
+            self.fuse_imgs = fuse_imgs
 
         self.__createFolders()
         self.__exportArgs(args)
@@ -57,7 +58,7 @@ class datasetCreator:
             self.__createSingleDataset()
     
     def __createFusedDataset(self) -> None:
-        load_path_1, load_path_2 = self.args['load_path']
+        load_path_1, load_path_2 = self.input_path
         assert os.path.exists(load_path_1), f"Path {load_path_1} does not exist"
         assert os.path.exists(load_path_2), f"Path {load_path_2} does not exist"
 
@@ -65,8 +66,9 @@ class datasetCreator:
             if f.split('.')[-1] in EXT:
                 assert f in os.listdir(load_path_2), f"File {f} not found in {load_path_2}"
 
-                img_1 = Image.open(load_path_1 + f)
-                img_2 = Image.open(load_path_2 + f)
+                path_1 = load_path_1 + f
+                path_2 = load_path_2 + f
+                self.fuse_imgs(path_1, path_2, self.output_path)
 
     
     def __createSingleDataset(self) -> None:
@@ -80,7 +82,7 @@ class datasetCreator:
                     img.save(self.output_path + f)
     
     def __processTiffImage(self,
-                           portion: float = 0.01) -> None:
+                           portion: float = 1.0) -> None:
         
         from skimage import io
 

@@ -8,7 +8,7 @@ ARGUMENTS FORMAT:
     "output_path": "output_path",
     "mode": "train",
     "shape": [256, 256],
-    "mods": ["blur", "noise", "rotate", "flip", "crop", null],
+    "mods": ["blur", "noise", "rotate", "flip", "crop"] or None
 }
 
 2 - DATASET FROM FUSED MODALITIES
@@ -26,8 +26,8 @@ ARGUMENTS FORMAT:
 '''
 
 args = {
-    "input_path": "./data/train/l_pty/",
-    "output_path": "./data/train/l_pty_deneme/",
+    "input_path": ["./data/train/l_pty_full_256x256/","./data/train/l_xtm_full_256x256/"],
+    "output_path": "./data/train/l_fused_full_256x256/",
     "shape": [256, 256,3],
-    "mods": ['blur', 'crop', 'flip', 'rotate', 'noise'],
+    "mods": [None,None]
 }
