@@ -8,13 +8,20 @@ size=6
 BATCH_NORM_DECAY = 1 - 0.9  # pytorch batch norm `momentum = 1 - counterpart` of tensorflow
 BATCH_NORM_EPSILON = 1e-5
 
-def get_act(activation):
-    """Only supports ReLU and SiLU/Swish."""
-    assert activation in ['relu', 'silu']
-    if activation == 'relu':
-        return nn.ReLU()
-    else:
-        return nn.Hardswish()  # TODO: pytorch's nn.Hardswish() v.s. tf.nn.swish
+def get_act(activation: str):
+    """Get activation functions from the config file."""
+    activation = activation.lower()
+    match activation:
+        case 'elu':
+            return nn.ELU()
+        case 'relu':
+            return nn.ReLU()
+        case 'lrelu':
+            return nn.LeakyReLU(negative_slope=0.2)
+        case 'swish':
+            return nn.SiLU()
+        case other:
+            raise NotImplementedError('activation function does not exist!')
 
 
 class BNReLU(nn.Module):

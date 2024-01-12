@@ -136,8 +136,6 @@ def get_model_fn(model, train=False):
   return model_fn
 
 
-
-
 def to_flattened_numpy(x):
   """Flatten a torch tensor `x` and convert it to numpy."""
   return x.detach().cpu().numpy().reshape((-1,))

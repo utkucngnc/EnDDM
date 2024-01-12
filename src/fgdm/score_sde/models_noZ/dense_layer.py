@@ -20,7 +20,7 @@ from torch.nn.init import _calculate_fan_in_and_fan_out
 import numpy as np
 
 
-def _calculate_correct_fan(tensor, mode):
+def _calculate_correct_fan(tensor, mode: str):
     """
     copied and modified from https://github.com/pytorch/pytorch/blob/master/torch/nn/init.py#L337
     """
@@ -33,7 +33,7 @@ def _calculate_correct_fan(tensor, mode):
     return fan_in if mode == 'fan_in' else fan_out
 
 
-def kaiming_uniform_(tensor, gain=1., mode='fan_in'):
+def kaiming_uniform_(tensor: torch.Tensor, gain=1., mode='fan_in'):
     r"""Fills the input `Tensor` with values according to the method
     described in `Delving deep into rectifiers: Surpassing human-level
     performance on ImageNet classification` - He, K. et al. (2015), using a

@@ -49,11 +49,10 @@ class Recurrent_block(nn.Module):
 
     def forward(self, x):
         for i in range(self.t):
-
             if i == 0:
                 x1 = self.conv(x)
-
             x1 = self.conv(x + x1)
+            
         return x1
 
 
