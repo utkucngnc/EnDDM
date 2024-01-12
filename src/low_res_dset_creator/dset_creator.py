@@ -75,7 +75,7 @@ class datasetCreator:
         if self.input_path.split('.')[-1] in EXT:
             self.__processTiffImage()
         else:
-            for f in os.listdir(self.input_path):
+            for f in os.listdir(self.input_path): # add channel check assertion
                 if f.split('.')[-1] in EXT:
                     img = np.array(Image.open(self.input_path + f))
                     img = self.__applyMod(img, self.mods)
