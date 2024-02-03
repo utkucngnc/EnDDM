@@ -18,7 +18,7 @@ import torch.optim as optim
 import torchvision
 
 import torchvision.transforms as transforms
-from src.dataset import BatteryDataset
+#from src.fgdm.dataset import BatteryDataset
 
 from torch.multiprocessing import Process
 import torch.distributed as dist
@@ -508,7 +508,7 @@ def init_processes(rank, size, fn, args):
     """ Initialize the distributed environment. """
     os.environ['MASTER_ADDR'] = args.master_address
     os.environ['MASTER_PORT'] = '2139'
-    torch.cuda.set_device(args.local_rank)
+    torch.cuda.set_device(torch.device('cuda:{}'.format(args.local_rank)))
     gpu = args.local_rank
     dist.init_process_group(backend='nccl', init_method='env://', rank=rank, world_size=size)
     fn(rank, gpu, args)
